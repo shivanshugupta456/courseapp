@@ -19,35 +19,40 @@ function Courses() {
   const [loading, setLoading] = useState(true);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  // Check login
+  // ✅ Check login
   useEffect(() => {
     const token = localStorage.getItem("user");
     setIsLoggedIn(!!token);
   }, []);
 
-  // Fetch courses
+  // ✅ Fetch courses (FINAL FIX)
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const response = await axios.get(`${BACKEND_URL}/api/course/courses`);
-        setCourses(response.data.courses || []);
+        console.log("API:", `${BACKEND_URL}/api/course/courses`);
+
+        const response = await axios.get(
+          `${BACKEND_URL}/api/course/courses`
+        );
+
+        setCourses(response.data?.courses || []);
       } catch (error) {
         console.log("error in fetchCourses ", error);
         toast.error("Failed to load courses");
       } finally {
-        setLoading(false); // 🔥 always stop loading
+        setLoading(false);
       }
     };
+
     fetchCourses();
   }, []);
 
-  // Logout
+  // ✅ Logout FIX
   const handleLogout = async () => {
     try {
-      const response = await axios.get(`${BACKEND_URL}/user/logout`, {
-        withCredentials: true,
-      });
-      toast.success(response.data.message);
+      await axios.get(`${BACKEND_URL}/api/user/logout`); // 🔥 FIXED API
+
+      toast.success("Logged out successfully");
       localStorage.removeItem("user");
       setIsLoggedIn(false);
     } catch (error) {
@@ -72,8 +77,9 @@ function Courses() {
 
       {/* Sidebar */}
       <aside
-        className={`fixed top-0 left-0 h-screen bg-gray-100 w-64 p-5 transform z-10 transition-transform duration-300 ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-          } md:translate-x-0 md:static`}
+        className={`fixed top-0 left-0 h-screen bg-gray-100 w-64 p-5 transform z-10 transition-transform duration-300 ${
+          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+        } md:translate-x-0 md:static`}
       >
         <div className="flex items-center mb-10 mt-10 md:mt-0">
           <img src={logo} alt="logo" className="rounded-full h-12 w-12" />
@@ -87,10 +93,8 @@ function Courses() {
               </Link>
             </li>
 
-            <li className="mb-4 text-blue-500">
-              <div className="flex items-center">
-                <FaDiscourse className="mr-2" /> Courses
-              </div>
+            <li className="mb-4 text-blue-500 flex items-center">
+              <FaDiscourse className="mr-2" /> Courses
             </li>
 
             <li className="mb-4">
@@ -99,10 +103,8 @@ function Courses() {
               </Link>
             </li>
 
-            <li className="mb-4">
-              <div className="flex items-center">
-                <IoMdSettings className="mr-2" /> Settings
-              </div>
+            <li className="mb-4 flex items-center">
+              <IoMdSettings className="mr-2" /> Settings
             </li>
 
             <li>
