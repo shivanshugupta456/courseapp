@@ -3,8 +3,7 @@ import { v2 as cloudinary } from "cloudinary";
 import { Purchase } from "../models/purchase.model.js";
 import config from "../config.js"; // ✅ import fix
 
-// ✅ use stripe from config (no redeclaration)
-const { stripe } = config;
+
 
 
 // ================= CREATE COURSE =================
