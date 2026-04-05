@@ -44,7 +44,7 @@ try {
 }
 
 // defining routes
-c
+
 // Cloudinary configuration code
 cloudinary.config({
   cloud_name: process.env.cloud_name,
