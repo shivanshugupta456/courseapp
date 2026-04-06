@@ -29,10 +29,10 @@ function Courses() {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        console.log("API:", `${BACKEND_URL}/api/course/courses`);
+        console.log("API:", `${BACKEND_URL}/course/courses`);
 
         const response = await axios.get(
-          `${BACKEND_URL}/api/course/courses`
+          `${BACKEND_URL}/course/courses`
         );
 
         setCourses(response.data?.courses || []);
