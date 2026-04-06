@@ -50,7 +50,7 @@ function Courses() {
   // ✅ Logout FIX
   const handleLogout = async () => {
     try {
-      await axios.get(`${BACKEND_URL}/api/user/logout`); // 🔥 FIXED API
+      await axios.get(`${BACKEND_URL}/user/logout`); // 🔥 FIXED API
 
       toast.success("Logged out successfully");
       localStorage.removeItem("user");
