@@ -30,9 +30,9 @@ function AdminLogin() {
         }
       );
       console.log("AdminLogin successful: ", response.data);
-      toast.success(response.data.message);
-      navigate("/admin/dashboard");
       localStorage.setItem("admin", JSON.stringify(response.data));
+      toast.success(response.data.message);
+      window.location.href = "/admin/dashboard";
     } catch (error) {
       if (error.response) {
         setErrorMessage(error.response.data.errors || "AdminLogin failed!!!");
