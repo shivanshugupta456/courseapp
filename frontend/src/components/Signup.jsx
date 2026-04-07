@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import logo from "../../public/logo.webp";
 import { Link, useNavigate } from "react-router-dom";
+import { FiArrowRight, FiEye, FiEyeOff } from "react-icons/fi";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { BACKEND_URL } from "../utils/utils";
@@ -10,13 +11,16 @@ function Signup() {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
   const [errorMessage, setErrorMessage] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrorMessage("");
+    setIsSubmitting(true);
 
     try {
       const response = await axios.post(
@@ -34,127 +38,163 @@ function Signup() {
           },
         }
       );
-      console.log("Sugnup successful: ", response.data);
       toast.success(response.data.message);
       navigate("/login");
     } catch (error) {
       if (error.response) {
-        setErrorMessage(error.response.data.errors || "Signup failed!!!");
+        setErrorMessage(
+          error.response.data.errors ||
+            error.response.data.message ||
+            "Signup failed."
+        );
+      } else {
+        setErrorMessage("Unable to connect to the server. Please try again.");
       }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="bg-gradient-to-r from-black to-blue-950 ">
-      <div className="h-screen container mx-auto flex  items-center justify-center text-white">
-        {/* Header */}
-        <header className="absolute top-0 left-0 w-full flex justify-between items-center p-5  ">
-          <div className="flex items-center space-x-2">
-            <img src={logo} alt="Logo" className="w-10 h-10 rounded-full" />
-            <Link to={"/"} className="text-xl font-bold text-orange-500">
-              CourseHaven
+    <div className="min-h-screen bg-slate-950 text-white">
+      <div className="mx-auto flex min-h-screen max-w-7xl flex-col lg:flex-row">
+        <section className="relative flex flex-1 overflow-hidden border-b border-slate-800 px-6 py-8 lg:min-h-screen lg:items-center lg:border-r lg:border-b-0 lg:px-12">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(249,115,22,0.22),_transparent_28%),radial-gradient(circle_at_bottom_right,_rgba(56,189,248,0.18),_transparent_30%)]" />
+          <div className="relative w-full">
+            <Link to="/" className="inline-flex items-center gap-3">
+              <img src={logo} alt="CourseHaven" className="h-12 w-12 rounded-2xl" />
+              <div>
+                <p className="text-xs uppercase tracking-[0.35em] text-slate-400">
+                  Member Access
+                </p>
+                <h1 className="text-2xl font-semibold text-white">CourseHaven</h1>
+              </div>
             </Link>
+
+            <div className="mt-16 max-w-xl">
+              <p className="text-sm uppercase tracking-[0.35em] text-orange-300">
+                Start learning
+              </p>
+              <h2 className="mt-6 text-4xl font-semibold leading-tight text-white sm:text-5xl">
+                Create your account and step into a cleaner learning experience.
+              </h2>
+              <p className="mt-5 text-base leading-7 text-slate-300">
+                Sign up once, explore premium courses, track your purchases, and
+                keep your progress in one place.
+              </p>
+            </div>
           </div>
-          <div className="flex items-center space-x-4">
-            <Link
-              to={"/login"}
-              className="bg-transparent border border-gray-500 p-1 text-sm md:text-md md:py-2 md:px-4 rounded-md"
-            >
-              Login
-            </Link>
-            <Link
-              to={"/courses"}
-              className="bg-orange-500 p-1 text-sm md:text-md md:py-2 md:px-4 rounded-md"
-            >
-              Join now
-            </Link>
-          </div>
-        </header>
+        </section>
 
-        {/* Signup Form */}
-        <div className="bg-gray-900 p-8 rounded-lg shadow-lg w-[500px] m-8 md:m-0 mt-20">
-          <h2 className="text-2xl font-bold mb-4 text-center">
-            Welcome to <span className="text-orange-500">CourseHaven</span>
-          </h2>
-          <p className="text-center text-gray-400 mb-6">
-            Just Signup To Join Us!
-          </p>
-
-          <form onSubmit={handleSubmit}>
-            <div className="mb-4">
-              <label htmlFor="firstname" className=" text-gray-400 mb-2">
-                Firstname
-              </label>
-              <input
-                type="text"
-                id="firstname"
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-                className="w-full p-3 rounded-md bg-gray-800 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Type your firstname"
-              />
-            </div>
-            <div className="mb-4">
-              <label htmlFor="lastname" className=" text-gray-400 mb-2">
-                Lastname
-              </label>
-              <input
-                type="text"
-                id="lastname"
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-                className="w-full p-3 rounded-md bg-gray-800 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Type your lastname"
-                required
-              />
+        <section className="flex flex-1 items-center justify-center px-6 py-10 lg:px-12">
+          <div className="w-full max-w-xl rounded-[2rem] border border-white/10 bg-slate-900/90 p-8 shadow-2xl shadow-black/30 backdrop-blur">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="text-sm uppercase tracking-[0.3em] text-orange-300">
+                  Signup
+                </p>
+                <h2 className="mt-3 text-3xl font-semibold text-white">Create account</h2>
+                <p className="mt-3 text-sm leading-6 text-slate-400">
+                  Join CourseHaven and unlock a more refined course journey.
+                </p>
+              </div>
+              <Link
+                to="/login"
+                className="rounded-2xl border border-slate-700 px-4 py-3 text-sm font-medium text-slate-200 transition hover:bg-slate-800"
+              >
+                Login
+              </Link>
             </div>
 
-            <div className="mb-4">
-              <label htmlFor="email" className=" text-gray-400 mb-2">
-                Email
-              </label>
-              <input
-                type="text"
-                id="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full p-3 rounded-md bg-gray-800 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="name@email.com"
-                required
-              />
-            </div>
-            <div className="mb-4">
-              <label htmlFor="password" className=" text-gray-400 mb-2">
-                Password
-              </label>
-              <div className="relative">
+            <form onSubmit={handleSubmit} className="mt-8 space-y-5">
+              <div className="grid gap-5 sm:grid-cols-2">
+                <div className="space-y-2">
+                  <label htmlFor="firstname" className="text-sm font-medium text-slate-300">
+                    First name
+                  </label>
+                  <input
+                    type="text"
+                    id="firstname"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    className="w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none transition placeholder:text-slate-500 focus:border-orange-400 focus:ring-2 focus:ring-orange-400/20"
+                    placeholder="Enter first name"
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label htmlFor="lastname" className="text-sm font-medium text-slate-300">
+                    Last name
+                  </label>
+                  <input
+                    type="text"
+                    id="lastname"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    className="w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none transition placeholder:text-slate-500 focus:border-orange-400 focus:ring-2 focus:ring-orange-400/20"
+                    placeholder="Enter last name"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label htmlFor="email" className="text-sm font-medium text-slate-300">
+                  Email
+                </label>
                 <input
-                  type="password"
-                  id="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full p-3 rounded-md bg-gray-800 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="********"
+                  type="email"
+                  id="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none transition placeholder:text-slate-500 focus:border-orange-400 focus:ring-2 focus:ring-orange-400/20"
+                  placeholder="name@email.com"
                   required
                 />
-                <span className="absolute right-3 top-3 text-gray-500 cursor-pointer">
-                  👁️
-                </span>
               </div>
-            </div>
-            {errorMessage && (
-              <div className="mb-4 text-red-500 text-center">
-                {errorMessage}
+
+              <div className="space-y-2">
+                <label htmlFor="password" className="text-sm font-medium text-slate-300">
+                  Password
+                </label>
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    id="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 pr-14 text-white outline-none transition placeholder:text-slate-500 focus:border-orange-400 focus:ring-2 focus:ring-orange-400/20"
+                    placeholder="Create a password"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 transition hover:text-white"
+                  >
+                    {showPassword ? <FiEyeOff /> : <FiEye />}
+                  </button>
+                </div>
               </div>
-            )}
-            <button
-              type="submit"
-              className="w-full bg-orange-500 hover:bg-blue-600 text-white py-3 px-6 rounded-md transition"
-            >
-              Signup
-            </button>
-          </form>
-        </div>
+
+              {errorMessage && (
+                <div className="rounded-2xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+                  {errorMessage}
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-orange-500 px-5 py-3 font-semibold text-white transition hover:bg-orange-400 disabled:cursor-not-allowed disabled:opacity-70"
+              >
+                {isSubmitting ? "Creating account..." : "Create Account"}
+                <FiArrowRight />
+              </button>
+            </form>
+          </div>
+        </section>
       </div>
     </div>
   );

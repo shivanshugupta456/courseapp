@@ -1,43 +1,35 @@
-
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { FaDiscourse, FaDownload } from "react-icons/fa";
-import { IoMdSettings } from "react-icons/io";
-import { IoLogIn, IoLogOut } from "react-icons/io5";
-import { RiHome2Fill } from "react-icons/ri";
-import { HiMenu, HiX } from "react-icons/hi"; // Icons for sidebar toggle
+import { FiArrowLeft, FiBookOpen, FiLogOut, FiShoppingBag } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
 import { BACKEND_URL } from "../utils/utils";
 
 function Purchases() {
-  const [purchases, setPurchase] = useState([]);
+  const [purchases, setPurchases] = useState([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [errorMessage, setErrorMessage] = useState(true);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Sidebar open state
+  const [errorMessage, setErrorMessage] = useState("");
+  const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
-    const user = JSON.parse(localStorage.getItem("user"));
-  const token = user?.token; // using optional chaining to avoid app crashing
+  const user = JSON.parse(localStorage.getItem("user"));
+  const token = user?.token;
 
-  console.log("purchases: ", purchases);
-
-  // Token handling
   useEffect(() => {
- 
     if (token) {
       setIsLoggedIn(true);
-    } else {
-      setIsLoggedIn(false);
+      return;
     }
-  }, []);
 
-  if (!token) {
+    setIsLoggedIn(false);
     navigate("/login");
-  }
+  }, [navigate, token]);
 
-  // Fetch purchases
   useEffect(() => {
+    if (!token) {
+      return;
+    }
+
     const fetchPurchases = async () => {
       try {
         const response = await axios.get(`${BACKEND_URL}/user/purchases`, {
@@ -46,15 +38,17 @@ function Purchases() {
           },
           withCredentials: true,
         });
-        setPurchase(response.data.courseData);
+        setPurchases(response.data.courseData || []);
       } catch (error) {
         setErrorMessage("Failed to fetch purchase data");
+      } finally {
+        setLoading(false);
       }
     };
-    fetchPurchases();
-  }, []);
 
-  // Logout
+    fetchPurchases();
+  }, [token]);
+
   const handleLogout = async () => {
     try {
       const response = await axios.get(`${BACKEND_URL}/user/logout`, {
@@ -66,121 +60,129 @@ function Purchases() {
       setIsLoggedIn(false);
     } catch (error) {
       console.log("Error in logging out ", error);
-      toast.error(error.response.data.errors || "Error in logging out");
+      toast.error(error.response?.data?.errors || "Error in logging out");
     }
   };
 
-  // Toggle sidebar visibility
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-slate-950 text-slate-400">
+        Loading purchases...
+      </div>
+    );
+  }
 
   return (
-    <div className="flex h-screen">
-      {/* Sidebar */}
-      <div
-        className={`fixed inset-y-0 left-0 bg-gray-100 p-5 transform ${
-          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } md:translate-x-0 transition-transform duration-300 ease-in-out w-64 z-50`}
-      >
-        <nav>
-          <ul className="mt-16 md:mt-0">
-            <li className="mb-4">
-              <Link to="/" className="flex items-center">
-                <RiHome2Fill className="mr-2" /> Home
-              </Link>
-            </li>
-            <li className="mb-4">
-              <Link to="/courses" className="flex items-center">
-                <FaDiscourse className="mr-2" /> Courses
-              </Link>
-            </li>
-            <li className="mb-4">
-              <a href="#" className="flex items-center text-blue-500">
-                <FaDownload className="mr-2" /> Purchases
-              </a>
-            </li>
-            <li className="mb-4">
-              <Link to="/settings" className="flex items-center">
-                <IoMdSettings className="mr-2" /> Settings
-              </Link>
-            </li>
-            <li>
-              {isLoggedIn ? (
-                <button onClick={handleLogout} className="flex items-center">
-                  <IoLogOut className="mr-2" /> Logout
-                </button>
-              ) : (
-                <Link to="/login" className="flex items-center">
-                  <IoLogIn className="mr-2" /> Login
-                </Link>
-              )}
-            </li>
-          </ul>
-        </nav>
-      </div>
+    <div className="min-h-screen bg-slate-950 px-5 py-8 text-white sm:px-8 lg:px-10">
+      <div className="mx-auto max-w-7xl">
+        <header className="flex flex-col gap-4 rounded-[2rem] border border-white/10 bg-slate-900/80 px-6 py-5 backdrop-blur lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex items-center gap-3">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-orange-500/15 text-orange-300">
+              <FiShoppingBag className="text-xl" />
+            </div>
+            <div>
+              <p className="text-xs uppercase tracking-[0.35em] text-slate-400">Learner Area</p>
+              <h1 className="text-2xl font-semibold text-white">My Purchases</h1>
+            </div>
+          </div>
 
-      {/* Sidebar Toggle Button (Mobile) */}
-      <button
-        className="fixed top-4 left-4 z-50 md:hidden bg-blue-600 text-white p-2 rounded-lg"
-        onClick={toggleSidebar}
-      >
-        {isSidebarOpen ? (
-          <HiX className="text-2xl" />
-        ) : (
-          <HiMenu className="text-2xl" />
-        )}
-      </button>
-
-      {/* Main Content */}
-      <div
-        className={`flex-1 p-8 bg-gray-50 transition-all duration-300 ${
-          isSidebarOpen ? "ml-64" : "ml-0"
-        } md:ml-64`}
-      >
-        <h2 className="text-xl font-semibold mt-6 md:mt-0 mb-6">
-          My Purchases
-        </h2>
-
-        {/* Error message */}
-        {errorMessage && (
-          <div className="text-red-500 text-center mb-4">{errorMessage}</div>
-        )}
-
-        {/* Render purchases */}
-        {purchases.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {purchases.map((purchase, index) => (
-              <div
-                key={index}
-                className="bg-white rounded-lg shadow-md p-6 mb-6"
+          <div className="flex flex-wrap gap-3">
+            <Link
+              to="/courses"
+              className="inline-flex items-center gap-2 rounded-2xl border border-slate-700 px-4 py-3 text-sm font-medium text-slate-100 transition hover:bg-slate-800"
+            >
+              <FiArrowLeft />
+              Back to Courses
+            </Link>
+            {isLoggedIn && (
+              <button
+                onClick={handleLogout}
+                className="inline-flex items-center gap-2 rounded-2xl bg-orange-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-orange-400"
               >
-                <div className="flex flex-col items-center space-y-4">
-                  {/* Course Image */}
-                  <img
-                    className="rounded-lg w-full h-48 object-cover"
-                    src={
-                      purchase.image?.url || "https://via.placeholder.com/200"
-                    }
-                    alt={purchase.title}
-                  />
-                  <div className="text-center">
-                    <h3 className="text-lg font-bold">{purchase.title}</h3>
-                    <p className="text-gray-500">
-                      {purchase.description.length > 100
-                        ? `${purchase.description.slice(0, 100)}...`
-                        : purchase.description}
-                    </p>
-                    <span className="text-green-700 font-semibold text-sm">
-                      ${purchase.price} only
+                <FiLogOut />
+                Logout
+              </button>
+            )}
+          </div>
+        </header>
+
+        <section className="relative mt-8 overflow-hidden rounded-[2rem] border border-white/10 bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 p-8 shadow-2xl shadow-black/30">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(249,115,22,0.2),_transparent_28%),radial-gradient(circle_at_bottom_right,_rgba(56,189,248,0.16),_transparent_30%)]" />
+          <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+            <div className="max-w-2xl">
+              <p className="text-sm uppercase tracking-[0.35em] text-orange-300">Owned Courses</p>
+              <h2 className="mt-3 text-4xl font-semibold leading-tight text-white sm:text-5xl">
+                Revisit everything you already paid for in one cleaner space.
+              </h2>
+              <p className="mt-4 max-w-xl text-base leading-7 text-slate-300">
+                Keep track of your purchased content and jump back into the courses you
+                own without digging around the platform.
+              </p>
+            </div>
+
+            <div className="rounded-[1.5rem] border border-slate-800 bg-slate-950/60 px-6 py-5">
+              <p className="text-sm text-slate-400">Your library</p>
+              <h3 className="mt-3 text-3xl font-semibold text-white">{purchases.length}</h3>
+              <p className="mt-2 text-sm text-slate-400">Purchased courses</p>
+            </div>
+          </div>
+        </section>
+
+        {errorMessage && (
+          <div className="mt-8 rounded-2xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+            {errorMessage}
+          </div>
+        )}
+
+        {purchases.length > 0 ? (
+          <section className="mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+            {purchases.map((purchase) => (
+              <div
+                key={purchase._id || purchase.title}
+                className="overflow-hidden rounded-[1.75rem] border border-slate-800 bg-slate-900 shadow-lg shadow-black/20"
+              >
+                <img
+                  className="h-52 w-full object-cover"
+                  src={purchase.image?.url || "https://via.placeholder.com/200"}
+                  alt={purchase.title}
+                />
+                <div className="p-5">
+                  <div className="flex items-start justify-between gap-4">
+                    <h3 className="text-2xl font-semibold text-white">{purchase.title}</h3>
+                    <span className="rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-300">
+                      Owned
                     </span>
+                  </div>
+                  <p className="mt-3 text-sm leading-6 text-slate-400">
+                    {purchase.description?.length > 130
+                      ? `${purchase.description.slice(0, 130)}...`
+                      : purchase.description}
+                  </p>
+                  <div className="mt-5 flex items-center justify-between rounded-2xl border border-slate-800 bg-slate-950/70 px-4 py-3">
+                    <div>
+                      <p className="text-xs uppercase tracking-[0.2em] text-slate-500">Paid</p>
+                      <p className="mt-1 text-lg font-semibold text-orange-300">Rs. {purchase.price}</p>
+                    </div>
+                    <FiBookOpen className="text-xl text-sky-300" />
                   </div>
                 </div>
               </div>
             ))}
-          </div>
+          </section>
         ) : (
-          <p className="text-gray-500">You have no purchases yet.</p>
+          <section className="mt-8 rounded-[2rem] border border-dashed border-slate-700 bg-slate-900/60 px-6 py-16 text-center">
+            <FiShoppingBag className="mx-auto text-3xl text-orange-300" />
+            <h3 className="mt-4 text-2xl font-semibold text-white">You have no purchases yet</h3>
+            <p className="mt-3 text-sm leading-6 text-slate-400">
+              Explore the course library and add your first course to start building your learning collection.
+            </p>
+            <Link
+              to="/courses"
+              className="mt-6 inline-flex items-center gap-2 rounded-2xl bg-orange-500 px-5 py-3 font-semibold text-white transition hover:bg-orange-400"
+            >
+              Browse Courses
+            </Link>
+          </section>
         )}
       </div>
     </div>
