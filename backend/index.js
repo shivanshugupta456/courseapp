@@ -57,6 +57,12 @@ cloudinary.config({
   api_secret: process.env.api_secret,
 });
 
+console.log("Cloudinary env check:", {
+  cloud_name: Boolean(process.env.cloud_name),
+  api_key: Boolean(process.env.api_key),
+  api_secret: Boolean(process.env.api_secret),
+});
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
