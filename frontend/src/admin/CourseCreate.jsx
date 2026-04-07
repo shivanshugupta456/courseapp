@@ -63,7 +63,11 @@ function CourseCreate() {
       setImagePreview("");
     } catch (error) {
       console.log(error);
-      toast.error(error.response?.data?.errors || "Failed to create course");
+      toast.error(
+        error.response?.data?.errors ||
+          error.response?.data?.error ||
+          "Failed to create course"
+      );
     }
   };
 

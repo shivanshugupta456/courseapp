@@ -22,10 +22,10 @@ export const createCourse = async (req, res) => {
 
     const { image } = req.files;
 
-    const allowedFormat = ["image/png", "image/jpeg"];
+    const allowedFormat = ["image/png", "image/jpeg", "image/jpg", "image/webp"];
     if (!allowedFormat.includes(image.mimetype)) {
       return res.status(400).json({
-        errors: "Invalid file format. Only PNG and JPG are allowed",
+        errors: "Invalid file format. Only PNG, JPG, JPEG, and WEBP are allowed",
       });
     }
 
@@ -58,7 +58,7 @@ export const createCourse = async (req, res) => {
 
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: "Error creating course" });
+    res.status(500).json({ errors: "Error creating course" });
   }
 };
 

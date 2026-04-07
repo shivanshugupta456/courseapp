@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import { v2 as cloudinary } from "cloudinary";
+import os from "os";
 
 import courseRoute from "./routes/course.route.js";
 import userRoute from "./routes/user.route.js";
@@ -21,7 +22,7 @@ app.use(cookieParser());
 app.use(
   fileUpload({
     useTempFiles: true,
-    tempFileDir: "/tmp/",
+    tempFileDir: os.tmpdir(),
   })
 );
 app.use(
