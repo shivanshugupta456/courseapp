@@ -30,9 +30,11 @@ export const createCourse = async (req, res) => {
     }
 
     // ✅ Cloudinary upload
-    const cloud_response = await cloudinary.uploader.upload(
-      image.tempFilePath
-    );
+    const uploadSource = image.tempFilePath
+      ? image.tempFilePath
+      : `data:${image.mimetype};base64,${image.data.toString("base64")}`;
+
+    const cloud_response = await cloudinary.uploader.upload(uploadSource);
 
     if (!cloud_response || cloud_response.error) {
       return res.status(400).json({
@@ -58,7 +60,9 @@ export const createCourse = async (req, res) => {
 
   } catch (error) {
     console.log(error);
-    res.status(500).json({ errors: "Error creating course" });
+    res.status(500).json({
+      errors: error.message || "Error creating course",
+    });
   }
 };
 
