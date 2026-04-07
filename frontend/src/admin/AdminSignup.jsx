@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { BACKEND_URL } from "../utils/utils";
+
 function AdminSignup() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -11,11 +12,13 @@ function AdminSignup() {
   const [password, setPassword] = useState("");
 
   const [errorMessage, setErrorMessage] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrorMessage("");
 
     try {
       const response = await axios.post(
@@ -33,13 +36,20 @@ function AdminSignup() {
           },
         }
       );
-      console.log("Sugnup successful: ", response.data);
+      console.log("Signup successful:", response.data);
       toast.success(response.data.message);
       navigate("/admin/login");
     } catch (error) {
       if (error.response) {
-        setErrorMessage(error.response.data.errors || "AdminSignup failed!!!");
+        setErrorMessage(
+          error.response.data.errors ||
+            error.response.data.message ||
+            "Admin signup failed."
+        );
+        return;
       }
+
+      setErrorMessage("Unable to connect to the server. Please try again.");
     }
   };
 
@@ -76,7 +86,7 @@ function AdminSignup() {
             Welcome to <span className="text-orange-500">CourseHaven</span>
           </h2>
           <p className="text-center text-gray-400 mb-6">
-            Just signup to mess with dashboard!
+            Create your admin account to access the dashboard.
           </p>
 
           <form onSubmit={handleSubmit}>
@@ -91,6 +101,7 @@ function AdminSignup() {
                 onChange={(e) => setFirstName(e.target.value)}
                 className="w-full p-3 rounded-md bg-gray-800 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Type your firstname"
+                required
               />
             </div>
             <div className="mb-4">
@@ -113,7 +124,7 @@ function AdminSignup() {
                 Email
               </label>
               <input
-                type="text"
+                type="email"
                 id="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -128,7 +139,7 @@ function AdminSignup() {
               </label>
               <div className="relative">
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   id="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -136,9 +147,13 @@ function AdminSignup() {
                   placeholder="********"
                   required
                 />
-                <span className="absolute right-3 top-3 text-gray-500 cursor-pointer">
-                  👁️
-                </span>
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  className="absolute right-3 top-3 text-sm text-gray-400 transition hover:text-white"
+                >
+                  {showPassword ? "Hide" : "Show"}
+                </button>
               </div>
             </div>
             {errorMessage && (
