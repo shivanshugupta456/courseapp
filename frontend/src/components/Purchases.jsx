@@ -8,6 +8,7 @@ import { BACKEND_URL } from "../utils/utils";
 
 function Purchases() {
   const [purchases, setPurchases] = useState([]);
+  const [purchaseCount, setPurchaseCount] = useState(0);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(true);
@@ -40,6 +41,7 @@ function Purchases() {
           withCredentials: true,
         });
         setPurchases(response.data.courseData || []);
+        setPurchaseCount(response.data.purchaseCount || 0);
       } catch (error) {
         setErrorMessage("Failed to fetch purchase data");
       } finally {
@@ -123,7 +125,7 @@ function Purchases() {
 
             <div className="rounded-[1.5rem] border border-slate-800 bg-slate-950/60 px-6 py-5">
               <p className="text-sm text-slate-400">Your library</p>
-              <h3 className="mt-3 text-3xl font-semibold text-white">{purchases.length}</h3>
+              <h3 className="mt-3 text-3xl font-semibold text-white">{purchaseCount}</h3>
               <p className="mt-2 text-sm text-slate-400">Purchased courses</p>
             </div>
           </div>

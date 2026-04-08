@@ -106,7 +106,11 @@ export const purchases = async (req, res) => {
       _id: { $in: purchasedCourseId },
     });
 
-    res.status(200).json({ purchased, courseData });
+    res.status(200).json({
+      purchased,
+      courseData,
+      purchaseCount: purchased.length,
+    });
   } catch (error) {
     res.status(500).json({ errors: "Error in purchases" });
     console.log("Error in purchase", error);
