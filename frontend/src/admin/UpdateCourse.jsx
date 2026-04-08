@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { FiArrowLeft, FiImage, FiLayers, FiRefreshCw, FiUploadCloud } from "react-icons/fi";
+import { readStoredJson } from "../utils/storage";
 import { BACKEND_URL } from "../utils/utils";
 
 function UpdateCourse() {
@@ -59,7 +60,7 @@ function UpdateCourse() {
     if (image) {
       formData.append("imageUrl", image);
     }
-    const admin = JSON.parse(localStorage.getItem("admin"));
+    const admin = readStoredJson("admin");
     const token = admin?.token;
     if (!token) {
       toast.error("Please login to admin");

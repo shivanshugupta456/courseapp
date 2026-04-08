@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { FiArrowLeft, FiBookOpen, FiLogOut, FiShoppingBag } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
+import { readStoredJson } from "../utils/storage";
 import { BACKEND_URL } from "../utils/utils";
 
 function Purchases() {
@@ -12,7 +13,7 @@ function Purchases() {
   const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem("user"));
+  const user = readStoredJson("user");
   const token = user?.token;
 
   useEffect(() => {

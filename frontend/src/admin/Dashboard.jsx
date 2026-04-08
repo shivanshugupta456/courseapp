@@ -13,11 +13,12 @@ import {
 import logo from "../../public/logo.webp";
 import toast from "react-hot-toast";
 import axios from "axios";
+import { readStoredJson } from "../utils/storage";
 import { BACKEND_URL } from "../utils/utils";
 
 function Dashboard() {
   const navigate = useNavigate();
-  const adminData = JSON.parse(localStorage.getItem("admin"));
+  const adminData = readStoredJson("admin");
   const adminProfile = adminData?.admin;
 
   const stats = [

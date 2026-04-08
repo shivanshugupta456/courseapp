@@ -9,6 +9,7 @@ import {
   FiPlusCircle,
   FiTrash2,
 } from "react-icons/fi";
+import { readStoredJson } from "../utils/storage";
 import { BACKEND_URL } from "../utils/utils";
 
 function OurCourses() {
@@ -16,7 +17,7 @@ function OurCourses() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  const admin = JSON.parse(localStorage.getItem("admin"));
+  const admin = readStoredJson("admin");
   const token = admin?.token;
 
   useEffect(() => {

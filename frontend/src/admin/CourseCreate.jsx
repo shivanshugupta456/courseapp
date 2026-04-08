@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
 import { FiArrowLeft, FiImage, FiLayers, FiUploadCloud } from "react-icons/fi";
+import { readStoredJson } from "../utils/storage";
 import { BACKEND_URL } from "../utils/utils";
 
 function CourseCreate() {
@@ -34,7 +35,7 @@ function CourseCreate() {
     formData.append("price", price);
     formData.append("image", image);
 
-    const admin = JSON.parse(localStorage.getItem("admin"));
+    const admin = readStoredJson("admin");
     const token = admin?.token;
     if (!token) {
       toast.error("Please login as admin first.");
