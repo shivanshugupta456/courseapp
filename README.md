@@ -4,7 +4,7 @@ CourseHaven ka frontend React + Vite + Tailwind CSS par built hai. Yeh learner-f
 
 ## Preview
 
-![CourseHaven homepage preview](./public/home-preview.png)
+![CourseHaven homepage preview](./frontend/public/home-preview.png)
 
 ## Highlights
 
@@ -28,17 +28,15 @@ CourseHaven ka frontend React + Vite + Tailwind CSS par built hai. Yeh learner-f
 ## Project Structure
 
 ```text
-frontend/
-|-- public/
-|-- src/
-|   |-- admin/
-|   |-- components/
-|   |-- utils/
-|   |-- App.jsx
-|   `-- main.jsx
-|-- .env
-|-- package.json
-`-- vite.config.js
+course-selling-app/
+|-- backend/
+|-- frontend/
+|   |-- public/
+|   |-- src/
+|   |-- .env
+|   |-- package.json
+|   `-- vite.config.js
+`-- README.md
 ```
 
 ## Main Screens
@@ -79,7 +77,7 @@ Frontend default Vite dev server usually runs on `http://localhost:5173`.
 
 ## Environment Variable
 
-Create or update `.env` file inside `frontend/`:
+Create or update `frontend/.env`:
 
 ```env
 VITE_STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key
@@ -111,6 +109,7 @@ Recent homepage redesign focuses on:
 Production build generate karne ke liye:
 
 ```bash
+cd frontend
 npm run build
 ```
 
