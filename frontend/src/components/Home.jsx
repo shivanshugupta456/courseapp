@@ -4,20 +4,13 @@ import { Link } from "react-router-dom";
 import { FaFacebook, FaInstagram, FaTwitter } from "react-icons/fa";
 import { FiArrowRight, FiBookOpen, FiLogOut, FiPlayCircle, FiTrendingUp } from "react-icons/fi";
 import axios from "axios";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
-import Slider from "react-slick";
 import toast from "react-hot-toast";
+import { readStoredJson } from "../utils/storage";
 import { BACKEND_URL } from "../utils/utils";
 
 function Home() {
   const [courses, setCourses] = useState([]);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  useEffect(() => {
-    const user = localStorage.getItem("user");
-    setIsLoggedIn(!!user);
-  }, []);
+  const isLoggedIn = !!readStoredJson("user");
 
   useEffect(() => {
     const fetchCourses = async () => {
@@ -41,34 +34,9 @@ function Home() {
       });
       toast.success(res.data.message);
       localStorage.removeItem("user");
-      setIsLoggedIn(false);
     } catch (error) {
       toast.error("Logout failed");
     }
-  };
-
-  const settings = {
-    dots: true,
-    infinite: courses.length > 3,
-    speed: 500,
-    slidesToShow: Math.min(3, courses.length || 1),
-    slidesToScroll: 1,
-    autoplay: true,
-    arrows: false,
-    responsive: [
-      {
-        breakpoint: 1024,
-        settings: {
-          slidesToShow: Math.min(2, courses.length || 1),
-        },
-      },
-      {
-        breakpoint: 640,
-        settings: {
-          slidesToShow: 1,
-        },
-      },
-    ],
   };
 
   return (
@@ -207,9 +175,9 @@ function Home() {
                 Loading featured courses...
               </div>
             ) : (
-              <Slider {...settings}>
+              <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
                 {courses.map((course) => (
-                  <div key={course._id} className="px-3 pb-3">
+                  <div key={course._id}>
                     <div className="overflow-hidden rounded-[1.75rem] border border-slate-800 bg-slate-950 shadow-lg shadow-black/20 transition hover:-translate-y-1 hover:border-slate-700">
                       <img
                         className="h-48 w-full object-cover"
@@ -238,7 +206,7 @@ function Home() {
                     </div>
                   </div>
                 ))}
-              </Slider>
+              </div>
             )}
           </div>
         </section>
